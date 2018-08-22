@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: fb3db8bc5b0318848a47c92c439a6146
+timeCreated: 1519982955
+licenseType: Pro
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - Camera_Prefab: {fileID: 20278605540550220, guid: 3992f0d5ce1f20a44b09d0007a8a4a9e,
+      type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

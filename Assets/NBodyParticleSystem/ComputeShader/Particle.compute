@@ -1,0 +1,134 @@
+﻿// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel GravityVel
+#pragma kernel GravityVelBeta
+#pragma kernel EulerPos
+
+#define WARP_SIZE 1024
+
+struct Particle {
+	float3 pos;
+	float3 vel;
+	float mass;
+};
+
+RWStructuredBuffer<Particle> particleBuffer;
+
+
+//Values must be set by CPU
+uint last_id;
+uint start_pos;
+uint end_pos;
+float timestep;
+float dark_energy;
+float eps;
+
+[numthreads(WARP_SIZE,1,1)]
+void GravityVel (uint3 id : SV_DispatchThreadID)
+{
+	if (id.x < last_id) {
+
+		float3 acc = float3(0.0f,0.0f,0.0f);
+		float3 pos = particleBuffer[id.x].pos;
+		float3 dist;
+		float distMag;
+
+		for (uint i = (uint)start_pos; i < (uint)end_pos; i++) {
+
+			dist = particleBuffer[i].pos - pos;
+			distMag = sqrt((dist.x * dist.x) + (dist.y * dist.y) + (dist.z * dist.z));
+
+			//if (i != id.x)
+			//{
+				//Gravity Calc
+
+				acc += (dist * particleBuffer[i].mass) / (pow((distMag*distMag) + (eps*eps), 3.0f/2.0f)); //Gravity
+				acc += -(dist/(distMag + eps)) * dark_energy;	
+
+				//Check collision
+				//if (distMag < 10.0f) //particle radius, will not detect if closer than eps
+				//{
+				//	acc -= dist * (10 / (distMag*distMag));
+				//}
+			//}
+
+		}
+		particleBuffer[id.x].vel += acc * timestep;
+		
+	}
+	
+}
+
+
+uint numGroupsMassiveParticles;
+groupshared Particle tempData[WARP_SIZE];
+[numthreads(WARP_SIZE,1,1)]
+void GravityVelBeta (uint3 id : SV_DispatchThreadID, uint3 gid : SV_GroupThreadID)
+{
+	float3 acc = float3(0.0f,0.0f,0.0f);
+	float3 pos = particleBuffer[id.x].pos;
+	float3 dist;
+	float distMag;
+
+	uint s_index;
+	for (uint j = 0; j < numGroupsMassiveParticles; j++) 
+	{
+		s_index = start_pos + (WARP_SIZE * j) + gid.x;
+
+		if (s_index < end_pos)
+		{
+			tempData[gid.x] = particleBuffer[s_index];
+		}
+
+		GroupMemoryBarrierWithGroupSync();
+
+		s_index -= gid.x;	
+
+		for (int i = 0; i < WARP_SIZE; i++)
+		{			
+			if (s_index + i < end_pos)
+			{
+				dist = tempData[i].pos - pos;
+				distMag = sqrt((dist.x * dist.x) + (dist.y * dist.y) + (dist.z * dist.z));
+
+				if (distMag >= eps)
+				{				
+
+					acc += (dist * tempData[i].mass) / (pow(distMag, 3.0f)); //Gravity
+					//acc += (dist * tempData[i].mass) / (pow((distMag*distMag) + (eps*eps), 3.0f/2.0f)); //Gravity
+					acc += -(dist/(distMag + eps)) * dark_energy; //Dark Energy
+
+					//Check collision
+					//if (distMag < 10.0f) //particle radius, will not detect if closer than eps
+					//{
+					//	acc -= dist * (10 / (distMag*distMag));
+					//}
+				}
+			}
+			else
+			{
+				break;
+			}
+		}
+
+		GroupMemoryBarrierWithGroupSync();
+		
+	}
+	if (id.x < last_id) {
+		particleBuffer[id.x].vel += acc * timestep;
+	}
+	
+}
+
+float3 GravityAcceleration(float3 pos)
+{
+	float3 acc = float3(0.0f,0.0f,0.0f);
+}
+
+[numthreads(WARP_SIZE,1,1)]
+void EulerPos (uint3 id : SV_DispatchThreadID)
+{
+	if (id.x < last_id)
+	{
+		particleBuffer[id.x].pos += particleBuffer[id.x].vel * timestep;
+	}
+}
