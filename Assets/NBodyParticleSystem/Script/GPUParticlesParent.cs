@@ -3,16 +3,6 @@
 public class GPUParticlesParent : MonoBehaviour {
 
     /// <summary>
-    /// Basic particle definition
-    /// </summary>
-    public struct Particle
-    {
-        public Vector3 pos;
-        public Vector3 vel;
-        public float mass;
-    };
-
-    /// <summary>
     /// Size in bytes of the Particle struct.
     /// </summary>
     private const int SIZE_FLOAT = 4;
@@ -37,7 +27,7 @@ public class GPUParticlesParent : MonoBehaviour {
     ///<summary>
     /// Max size of kernel work sent to GPU
     /// </summary>
-    public int maxKernelWorkSize = 1000;
+    public int maxKernelWorkSize = 100000;
 
     ///<summary>
     /// Wether to use the beta integrator (Usually doesn't work)
@@ -57,9 +47,9 @@ public class GPUParticlesParent : MonoBehaviour {
     public float timestep = 0.01f;
 
     /// <summary>
-    /// Should be about the max starting distance two particles are away from each other, divided by 100
+    /// Should be about the max starting distance two particles are away from each other, divided by 1000
     /// </summary>
-    public float eps = 200.0f / 100.0f;
+    public float eps = 200.0f / 1000.0f;
 
     ////Private Variables
 
@@ -100,8 +90,8 @@ public class GPUParticlesParent : MonoBehaviour {
         // Initialize the particle sytems at the start
         foreach (GPUParticleSystem system in this.gameObject.GetComponentsInChildren<GPUParticleSystem>())
         {
-            this.totalMassiveParticles += system.particleCount;
-            this.totalMasslessParticles += system.masslessParticleCount;
+            this.totalMassiveParticles += system.CountMassiveParticles();
+            this.totalMasslessParticles += system.CountMasslessParticles();
         }
 
         // Create the ComputeBuffer holding the Particles
@@ -112,7 +102,7 @@ public class GPUParticlesParent : MonoBehaviour {
         Particle[] tempParticleArray;
         foreach (GPUParticleSystem system in this.gameObject.GetComponentsInChildren<GPUParticleSystem>())
         {
-            tempParticleArray = system.InitParticles();
+            tempParticleArray = system.InitMassParticles();
             this.particleBuffer.SetData(tempParticleArray, 0, offset, tempParticleArray.Length);
             offset += tempParticleArray.Length;
         }

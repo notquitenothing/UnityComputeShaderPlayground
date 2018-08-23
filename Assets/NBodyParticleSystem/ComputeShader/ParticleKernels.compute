@@ -119,11 +119,6 @@ void GravityVelBeta (uint3 id : SV_DispatchThreadID, uint3 gid : SV_GroupThreadI
 	
 }
 
-float3 GravityAcceleration(float3 pos)
-{
-	float3 acc = float3(0.0f,0.0f,0.0f);
-}
-
 [numthreads(WARP_SIZE,1,1)]
 void EulerPos (uint3 id : SV_DispatchThreadID)
 {

@@ -2,91 +2,27 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GPUParticleSystem : MonoBehaviour {
+public class ParticleShapeCreator : MonoBehaviour {
 
-    public enum Shape { cube, sphere, shell, galaxy };
+    
 
-    /// <summary>
-    /// Number of Particle created in the system.
-    /// </summary>
-    public int particleCount = 1000;
-
-    /// <summary>
-    /// How massive each particle is (in natural units, 1 = Gravitational Constant G)
-    /// </summary>
-    [Range(0, 1.0f)]
-    public float particlesMass = 0.01f;
-
-    /// <summary>
-    /// Number of Particle created in the system.
-    /// </summary>
-    public int masslessParticleCount = 1000;
-
-    /// <summary>
-    /// The initial velocity of the particle system
-    /// </summary>
-    public Vector3 initialRelativeVelocity;
-
-    /// <summary>
-    /// Shape to initialize the particles in
-    /// </summary>
-    public Shape initShape = Shape.cube;
-
-    /// <summary>
-    /// Initial size of cube of particles
-    /// </summary>
-    public float shapeSize = 1;
-
-
-
-
-
-    public GPUParticlesParent.Particle[] InitParticles()
-    {
-        GPUParticlesParent.Particle[] particleArray = new GPUParticlesParent.Particle[particleCount];
-        this.CreateShape(particleArray, this.initShape);
-        this.TransformParticles(particleArray, this.transform.position);
-        this.RotateParticles(particleArray, this.transform.eulerAngles);
-        this.BoostParticleVelocities(particleArray, this.initialRelativeVelocity);
-        for (int i = 0; i < particleArray.Length; i++)
-        {
-            particleArray[i].mass = this.particlesMass;
-        }
-
-        return particleArray;
-    }
-
-    public GPUParticlesParent.Particle[] InitMasslessParticles()
-    {
-        GPUParticlesParent.Particle[] particleArray = new GPUParticlesParent.Particle[masslessParticleCount];
-        this.CreateShape(particleArray, this.initShape);
-        this.TransformParticles(particleArray, this.transform.position);
-        this.RotateParticles(particleArray, this.transform.eulerAngles);
-        this.BoostParticleVelocities(particleArray, this.initialRelativeVelocity);
-        for (int i = 0; i < particleArray.Length; i++)
-        {
-            particleArray[i].mass = 0.0f;
-        }
-
-        return particleArray;
-    }
-
-
-    private void CreateShape(GPUParticlesParent.Particle[] particleArray, Shape shape)
+    /*
+    internal static void CreateShape(Particle[] particleArray, Shape shape, float size)
     {
         if (shape == Shape.cube)
         {
             for (int i = 0; i < particleArray.Length; ++i)
             {
-                particleArray[i].pos.x = (((Random.value * 2) - 1.0f) * shapeSize);
-                particleArray[i].pos.y = (((Random.value * 2) - 1.0f) * shapeSize);
-                particleArray[i].pos.z = (((Random.value * 2) - 1.0f) * shapeSize);
+                particleArray[i].pos.x = (((Random.value * 2) - 1.0f) * size);
+                particleArray[i].pos.y = (((Random.value * 2) - 1.0f) * size);
+                particleArray[i].pos.z = (((Random.value * 2) - 1.0f) * size);
 
                 particleArray[i].vel.x = 0;
                 particleArray[i].vel.y = 0;
                 particleArray[i].vel.z = 0;
             }
         }
+
         else if (shape == Shape.sphere)
         {
             float phi;
@@ -102,7 +38,7 @@ public class GPUParticleSystem : MonoBehaviour {
                 u = Random.value;
 
                 theta = Mathf.Acos(costheta);
-                r = this.shapeSize * Mathf.Pow(u, 0.333f);
+                r = size * Mathf.Pow(u, 0.333f);
 
                 particleArray[i].pos.x = r * Mathf.Sin(theta) * Mathf.Cos(phi);
                 particleArray[i].pos.y = r * Mathf.Sin(theta) * Mathf.Sin(phi);
@@ -113,6 +49,7 @@ public class GPUParticleSystem : MonoBehaviour {
                 particleArray[i].vel.z = 0;
             }
         }
+
         else if (shape == Shape.shell)
         {
             float phi;
@@ -126,21 +63,22 @@ public class GPUParticleSystem : MonoBehaviour {
 
                 theta = Mathf.Acos(costheta);
 
-                particleArray[i].pos.x = this.shapeSize * Mathf.Sin(theta) * Mathf.Cos(phi);
-                particleArray[i].pos.y = this.shapeSize * Mathf.Sin(theta) * Mathf.Sin(phi);
-                particleArray[i].pos.z = this.shapeSize * Mathf.Cos(theta);
+                particleArray[i].pos.x = size * Mathf.Sin(theta) * Mathf.Cos(phi);
+                particleArray[i].pos.y = size * Mathf.Sin(theta) * Mathf.Sin(phi);
+                particleArray[i].pos.z = size * Mathf.Cos(theta);
 
                 particleArray[i].vel.x = 0;
                 particleArray[i].vel.y = 0;
                 particleArray[i].vel.z = 0;
             }
         }
+
         else if (shape == Shape.galaxy)
         {
-            float totalMass = this.particlesMass * this.particleCount;
+            //float totalMass = this.particlesMass * particleArray.Length;
             for (int i = 0; i < particleArray.Length; i++)
             {
-                float radius = this.shapeSize * Mathf.Sqrt(Random.value);
+                float radius = size * Mathf.Sqrt(Random.value);
                 float phi = Random.value * 2 * Mathf.PI;
 
                 particleArray[i].pos.x = radius * Mathf.Cos(phi);
@@ -148,18 +86,20 @@ public class GPUParticleSystem : MonoBehaviour {
                 particleArray[i].pos.z = 0.0f;
 
                 //float velocity = Mathf.Sqrt( (Mathf.Pow(radius, 1.0f) * totalMass) / Mathf.Pow(this.shapeSize, 1.0f) );
-                float velocity =  Mathf.Sqrt((totalMass * radius * radius) / Mathf.Pow( (radius*radius) + (this.shapeSize*this.shapeSize), 3.0f/2.0f) );
+                //float velocity = Mathf.Sqrt((totalMass * radius * radius) / Mathf.Pow((radius * radius) + (this.shapeSize * this.shapeSize), 3.0f / 2.0f));
                 //float velocity = Mathf.Sqrt(2 * Mathf.PI * this.shapeSize * totalMass * Mathf.Pow(radius / (2*this.shapeSize), 2.0f));
                 //velocity *= (1 + ((Random.value * 2 - 1) / 10.0f)); //Add 10% variance to velocities
-                particleArray[i].vel.x = -velocity * Mathf.Sin(phi);
-                particleArray[i].vel.y = velocity * Mathf.Cos(phi);
+                //particleArray[i].vel.x = -velocity * Mathf.Sin(phi);
+                //particleArray[i].vel.y = velocity * Mathf.Cos(phi);
+                particleArray[i].vel.x = 0.0f;
+                particleArray[i].vel.y = 0.0f;
                 particleArray[i].vel.z = 0.0f;
             }
         }
     }
+    */
 
-
-    private void TransformParticles(GPUParticlesParent.Particle[] particleArray, Vector3 transform)
+    internal static void SetPosition(Particle[] particleArray, Vector3 transform)
     {
         //Adjust position
         for (int i = 0; i < particleArray.Length; i++)
@@ -171,7 +111,7 @@ public class GPUParticleSystem : MonoBehaviour {
     }
 
 
-    private void RotateParticles(GPUParticlesParent.Particle[] particleArray, Vector3 rotation)
+    internal static void SetOrientation(Particle[] particleArray, Vector3 rotation)
     {
         rotation *= Mathf.PI / 180.0f; //Convert from degrees to radians
 
@@ -215,7 +155,7 @@ public class GPUParticleSystem : MonoBehaviour {
     }
 
 
-    private void BoostParticleVelocities(GPUParticlesParent.Particle[] particleArray, Vector3 velocityBoost)
+    internal static void SetVelocity(Particle[] particleArray, Vector3 velocityBoost)
     {
         //Adjust velocities
         for (int i = 0; i < particleArray.Length; i++)
