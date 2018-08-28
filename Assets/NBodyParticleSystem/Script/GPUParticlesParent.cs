@@ -37,7 +37,7 @@ public class GPUParticlesParent : MonoBehaviour {
     /// <summary>
     /// Dark Energy Constant value in simulated universe
     /// </summary>
-    [Range(0, 1.0f)]
+    [Range(0, 0.01f)]
     public float miliDarkEnergyConstant = 0.0f;
 
     /// <summary>
@@ -49,7 +49,7 @@ public class GPUParticlesParent : MonoBehaviour {
     /// <summary>
     /// Should be about the max starting distance two particles are away from each other, divided by 1000
     /// </summary>
-    public float eps = 200.0f / 1000.0f;
+    public float eps = 2.0f / 1000.0f;
 
     ////Private Variables
 

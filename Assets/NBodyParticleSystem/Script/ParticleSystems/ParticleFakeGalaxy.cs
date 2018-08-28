@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ParticleSanityCheck : GPUParticleSystem
-{
+public class ParticleFakeGalaxy : GPUParticleSystem {
 
     /// <summary>
     /// How massive each particle is (in natural units, 1 = Gravitational Constant (G) Kilograms).
@@ -13,17 +12,12 @@ public class ParticleSanityCheck : GPUParticleSystem
     /// <summary>
     /// Number of Particles created in the system.
     /// </summary>
-    public int planetCount = 10;
+    public int starCount = 40000;
 
     /// <summary>
     /// Initial size of shape of particles
     /// </summary>
-    public float size = 50;
-
-    /// <summary>
-    /// 
-    /// </summary>
-    public bool giveOrbit = true;
+    public float size = 100;
 
 
     public override Particle[] InitMassParticles()
@@ -41,7 +35,7 @@ public class ParticleSanityCheck : GPUParticleSystem
     {
         Particle[] particles;
 
-        particles = this.CreateSolar(this.planetCount);
+        particles = this.CreateSolar(this.starCount);
 
         this.SetInitialTransformsAndVelocities(particles);
 
@@ -55,7 +49,7 @@ public class ParticleSanityCheck : GPUParticleSystem
 
     public override int CountMasslessParticles()
     {
-        return this.planetCount;
+        return this.starCount;
     }
 
     private Particle[] CreateSolar(int count)
@@ -64,14 +58,18 @@ public class ParticleSanityCheck : GPUParticleSystem
 
         for (int i = 0; i < count; ++i)
         {
-            float r = size * Random.value;
-            
-            particles[i].pos.y = r;
+            float r = (size * Mathf.Sqrt(Random.value))+1;
+            float phi = Random.value * 2 * Mathf.PI;
 
-            if (this.giveOrbit)
-            {
-                particles[i].vel.x = Mathf.Sqrt(centralMass / r);
-            }
+            particles[i].pos.x = r * Mathf.Cos(phi);
+            particles[i].pos.y = r * Mathf.Sin(phi);
+            particles[i].pos.z = 0.0f;
+
+            float velocity = Mathf.Sqrt(centralMass / r);
+
+            particles[i].vel.x = -velocity * Mathf.Sin(phi);
+            particles[i].vel.y = velocity* Mathf.Cos(phi);
+
         }
 
         return particles;
@@ -90,7 +88,7 @@ public class ParticleSanityCheck : GPUParticleSystem
         particles[0].vel.z = 0;
 
         particles[0].mass = centralMass;
-        
+
         return particles;
     }
 }

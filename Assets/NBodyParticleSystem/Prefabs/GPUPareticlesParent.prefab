@@ -53,8 +53,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   material: {fileID: 2100000, guid: 23ffcc1de649cbd49b632edb7192e9c0, type: 2}
   computeShader: {fileID: 7200000, guid: d9bd9351a8e66f04098279eb48f44444, type: 3}
-  maxKernelWorkSize: 10000
-  useBetaIntegrator: 0
-  miliDarkEnergyConstant: 0
+  maxKernelWorkSize: 65536
+  useBetaIntegrator: 1
+  miliDarkEnergyConstant: 0.028
   timestep: 0.01
-  eps: 1
+  eps: 0.01

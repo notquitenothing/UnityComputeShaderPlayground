@@ -37,20 +37,20 @@ void GravityVel (uint3 id : SV_DispatchThreadID)
 			dist = particleBuffer[i].pos - pos;
 			distMag = sqrt((dist.x * dist.x) + (dist.y * dist.y) + (dist.z * dist.z));
 
-			//if (i != id.x)
-			//{
-				//Gravity Calc
+			if (distMag >= eps) {
+				acc += (dist * particleBuffer[i].mass) / (distMag * distMag * distMag); //Gravity
+				acc += -(dist / distMag) * dark_energy;
 
-				acc += (dist * particleBuffer[i].mass) / (pow((distMag*distMag) + (eps*eps), 3.0f/2.0f)); //Gravity
-				acc += -(dist/(distMag + eps)) * dark_energy;	
+
 
 				//Check collision
 				//if (distMag < 10.0f) //particle radius, will not detect if closer than eps
 				//{
 				//	acc -= dist * (10 / (distMag*distMag));
 				//}
-			//}
+			}
 
+			
 		}
 		particleBuffer[id.x].vel += acc * timestep;
 		
@@ -90,12 +90,10 @@ void GravityVelBeta (uint3 id : SV_DispatchThreadID, uint3 gid : SV_GroupThreadI
 				dist = tempData[i].pos - pos;
 				distMag = sqrt((dist.x * dist.x) + (dist.y * dist.y) + (dist.z * dist.z));
 
-				if (distMag >= eps)
-				{				
-
-					acc += (dist * tempData[i].mass) / (pow(distMag, 3.0f)); //Gravity
+				if (distMag >= eps) {
+					acc += (dist * tempData[i].mass) / (distMag * distMag * distMag); //Gravity
 					//acc += (dist * tempData[i].mass) / (pow((distMag*distMag) + (eps*eps), 3.0f/2.0f)); //Gravity
-					acc += -(dist/(distMag + eps)) * dark_energy; //Dark Energy
+					acc += -(dist / distMag) * dark_energy; //Dark Energy
 
 					//Check collision
 					//if (distMag < 10.0f) //particle radius, will not detect if closer than eps
@@ -109,6 +107,7 @@ void GravityVelBeta (uint3 id : SV_DispatchThreadID, uint3 gid : SV_GroupThreadI
 				break;
 			}
 		}
+		
 
 		GroupMemoryBarrierWithGroupSync();
 		

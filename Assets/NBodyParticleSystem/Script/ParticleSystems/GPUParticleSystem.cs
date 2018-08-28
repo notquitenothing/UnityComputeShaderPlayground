@@ -19,8 +19,8 @@ public abstract class GPUParticleSystem : MonoBehaviour {
 
     public void SetInitialTransformsAndVelocities(Particle[] particles)
     {
-        ParticleShapeCreator.SetPosition(particles, this.transform.position);
-        ParticleShapeCreator.SetOrientation(particles, this.transform.eulerAngles);
-        ParticleShapeCreator.SetVelocity(particles, this.transform.eulerAngles);
+        ParticleSystemModifier.OffsetPosition(particles, this.transform.position);
+        ParticleSystemModifier.OffsetOrientation(particles, this.transform.eulerAngles);
+        ParticleSystemModifier.OffsetVelocity(particles, this.initialRelativeVelocity);
     }
 }

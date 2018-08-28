@@ -9,50 +9,50 @@ Prefab:
     m_Modifications: []
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
-  m_RootGameObject: {fileID: 1371796736123212}
+  m_RootGameObject: {fileID: 1506959764624450}
   m_IsPrefabParent: 1
---- !u!1 &1371796736123212
+--- !u!1 &1506959764624450
 GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 5
   m_Component:
-  - component: {fileID: 4215530843140134}
-  - component: {fileID: 114364856813928842}
+  - component: {fileID: 4382794554764242}
+  - component: {fileID: 114155393840074920}
   m_Layer: 0
-  m_Name: GPUParticleSanityCheck
+  m_Name: GPUParticleDisk
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &4215530843140134
+--- !u!4 &4382794554764242
 Transform:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1371796736123212}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_GameObject: {fileID: 1506959764624450}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &114364856813928842
+--- !u!114 &114155393840074920
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1371796736123212}
+  m_GameObject: {fileID: 1506959764624450}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 74cfb50cda43915468cdd4ed2a210bad, type: 3}
+  m_Script: {fileID: 11500000, guid: 5c2d4e238b3720541b7592f9630bbe02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   initialRelativeVelocity: {x: 0, y: 0, z: 0}
-  centralMass: 1
-  planetCount: 10000
+  particleMass: 0.1
+  massiveCount: 16384
+  masslessCount: 0
   size: 100
-  giveOrbit: 1

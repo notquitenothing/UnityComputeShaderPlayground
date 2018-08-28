@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ParticleShapeCreator : MonoBehaviour {
+public class ParticleSystemModifier : MonoBehaviour {
 
     
 
@@ -99,7 +99,7 @@ public class ParticleShapeCreator : MonoBehaviour {
     }
     */
 
-    internal static void SetPosition(Particle[] particleArray, Vector3 transform)
+    internal static void OffsetPosition(Particle[] particleArray, Vector3 transform)
     {
         //Adjust position
         for (int i = 0; i < particleArray.Length; i++)
@@ -111,7 +111,7 @@ public class ParticleShapeCreator : MonoBehaviour {
     }
 
 
-    internal static void SetOrientation(Particle[] particleArray, Vector3 rotation)
+    internal static void OffsetOrientation(Particle[] particleArray, Vector3 rotation)
     {
         rotation *= Mathf.PI / 180.0f; //Convert from degrees to radians
 
@@ -155,7 +155,7 @@ public class ParticleShapeCreator : MonoBehaviour {
     }
 
 
-    internal static void SetVelocity(Particle[] particleArray, Vector3 velocityBoost)
+    internal static void OffsetVelocity(Particle[] particleArray, Vector3 velocityBoost)
     {
         //Adjust velocities
         for (int i = 0; i < particleArray.Length; i++)
